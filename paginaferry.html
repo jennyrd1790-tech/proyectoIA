@@ -1,0 +1,384 @@
+<html>
+  <head>
+    <style>
+    :root { --brand:#0f766e; --brand-2:#115e59; --text:#0f172a; --bg:#f8fafc; }
+    * { box-sizing:border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    body { margin:0; background:var(--bg); color:var(--text); }
+    .container { max-width: 820px; margin: 6rem auto; padding: 0 1rem; text-align:center; }
+    .btn { background:var(--brand); color:#fff; border:0; padding: .9rem 1.2rem; border-radius: 999px; font-weight:600; cursor:pointer; transition:.2s transform, .2s box-shadow, .2s background; box-shadow:0 6px 18px rgba(15,118,110,.25); }
+    .btn:hover { background:var(--brand-2); transform: translateY(-1px); box-shadow:0 10px 22px rgba(15,118,110,.28); }
+    .btn:active { transform: translateY(0); }
+
+    dialog { width: min(620px, 92vw); border:0; border-radius:16px; padding:0; box-shadow:0 30px 80px rgba(2,6,23,.28); }
+    dialog::backdrop { background: rgba(2,6,23,.55); backdrop-filter: blur(2px); }
+    .card { background:#fff; border-radius:16px; overflow:hidden; }
+    .card header { padding: 1.1rem 1.25rem; background: linear-gradient(180deg, #ecfeff, #fff); border-bottom:1px solid #e2e8f0; text-align:left; }
+    .card header h3 { margin:0; font-size:1.1rem; }
+    .card .body { padding: 1rem 1.25rem 1.25rem; text-align:left; }
+
+    .grid { display:grid; gap: .9rem; grid-template-columns: 1fr; }
+    @media (min-width:720px){ .grid { grid-template-columns: 1fr 1fr; } }
+
+    label { font-size:.9rem; font-weight:600; display:block; margin: .1rem 0 .35rem; }
+    input[type="date"], select, input[type="number"], input[type="text"] {
+      width:100%; padding:.7rem .8rem; border:1px solid #cbd5e1; border-radius:10px; background:#fff; font-size:1rem;
+    }
+
+    .actions { display:flex; gap:.6rem; justify-content:flex-end; margin-top: 1rem; }
+    .btn-outline { background:#fff; color:var(--text); border:1px solid #cbd5e1; box-shadow:none; }
+    .btn-outline:hover { background:#f1f5f9; }
+
+    .hint { font-size:.85rem; color:#475569; margin-top:.25rem; }
+    .total { font-weight:700; font-size:1.1rem; margin-top:1rem; text-align:right; }
+
+    /* Página de pago */
+    #pagoPage { display:none; max-width:500px; margin:4rem auto; padding:2rem; background:#fff; border-radius:16px; box-shadow:0 20px 40px rgba(2,6,23,.15); }
+    #pagoPage h2 { margin-top:0; }
+    .field { margin-bottom:1rem; }
+  </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800"
+    />
+
+    <title>Stitch Design</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  </head>
+  <body>
+    <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;' id="inicio">
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f5] px-10 py-3">
+          <div class="flex items-center gap-4 text-[#111418]">
+            <div class="size-4">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_6_330)">
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z"
+                    fill="currentColor"
+                  ></path>
+                </g>
+                <defs>
+                  <clipPath id="clip0_6_330"><rect width="48" height="48" fill="white"></rect></clipPath>
+                </defs>
+              </svg>
+            </div>
+            <h2 class="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em]">FerryGo</h2>
+          </div>
+          <div class="flex flex-1 justify-end gap-8">
+            <div class="flex items-center gap-9">
+              <a class="text-[#111418] text-sm font-medium leading-normal" href="#">Horarios</a>
+              <a class="text-[#111418] text-sm font-medium leading-normal" href="#">Puertos</a>
+              <a class="text-[#111418] text-sm font-medium leading-normal" href="#">Servicios</a>
+              <a class="text-[#111418] text-sm font-medium leading-normal" href="#">Ayuda</a>
+              <a class="text-[#111418] text-sm font-medium leading-normal" href="#">Contacto</a>
+            </div> 
+    <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#f0f2f5] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em]" id="openModal">Comprar boletos del ferry</button>
+  
+         
+          </div>
+        </header>
+        <div class="px-40 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+            <div class="@container">
+              <div class="@[480px]:p-4">
+                <div
+                  class="flex min-h-[480px] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 @[480px]:rounded-lg items-center justify-center p-4"
+                  style='background-image: linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCviLRzXSIuRM6cEZAJGFy1111o7sR5OgbdA9CUcdL5D23B-7_MoxyjAVNNOTqfiLA8ftqc3KFM0mo83F-xtlqZ7VGn3HYiWY41geiKlibZO93x4i_CuDnc_wyvD93E_C4X4RIzi2nSs1yPAoQrnmTNrKjn7VpDdYVZspe8RWtJlYk7M-TyOwuoefpOhLccKz5ppdTVZYfBqcbCNpU0PtTztJ-Gvw2puM0cdgb48ExBVXJdqiwBFoP4EfWLakoOEuaJY5mbg5Dzj-Wv");'
+                >
+                  <div class="flex flex-col gap-2 text-center">
+                    <h1
+                      class="text-white text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-5xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em]"
+                    >
+                      Encuentra tu próximo viaje en ferry
+                    </h1>
+                    <h2 class="text-white text-sm font-normal leading-normal @[480px]:text-base @[480px]:font-normal @[480px]:leading-normal">
+                      Reserva fácilmente tus boletos de ferry con FerryGo. Explora destinos y disfruta de viajes inolvidables.
+                    </h2>
+                  </div>
+                  <label class="flex flex-col min-w-40 h-14 w-full max-w-[480px] @[480px]:h-16">
+                    <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                      <div
+                        class="text-[#60758a] flex border border-[#dbe0e6] bg-white items-center justify-center pl-[15px] rounded-l-lg border-r-0"
+                        data-icon="MagnifyingGlass"
+                        data-size="20px"
+                        data-weight="regular"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                          <path
+                            d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                          ></path>
+                        </svg>
+                      </div>
+                      <input
+                        placeholder="Buscar rutas"
+                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border border-[#dbe0e6] bg-white focus:border-[#dbe0e6] h-full placeholder:text-[#60758a] px-[15px] rounded-r-none border-r-0 pr-2 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal @[480px]:text-base @[480px]:font-normal @[480px]:leading-normal"
+                        value=""
+                      />
+                      <div class="flex items-center justify-center rounded-r-lg border-l-0 border border-[#dbe0e6] bg-white pr-[7px]">
+                        <button
+                          class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 @[480px]:h-12 @[480px]:px-5 bg-[#0d80f2] text-white text-sm font-bold leading-normal tracking-[0.015em] @[480px]:text-base @[480px]:font-bold @[480px]:leading-normal @[480px]:tracking-[0.015em]"
+                        >
+                          <span class="truncate">Buscar</span>
+                        </button>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <h2 class="text-[#111418] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Ofertas especiales</h2>
+            <div class="flex overflow-y-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+              <div class="flex items-stretch p-4 gap-3">
+                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg flex flex-col"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA-0cAdHOAaUVyi7C5uEqNbwroDDWmTUTgF44uXH4qNXlIyH4ZT1sLIySXTQUlN3olZ9XpRZuRO7fSUSHOQImTCoZ3lzsTqG8XVnXXTTeAfEcFfUJl1Xs4hXFEPh9W3Fa_NBGfnYGnZCENiX5cPmv-HqIBJKtabGwld-BZjRPQ-HBQol_eoS4jCmAp5FZc6kDQlFXFuKBghJaoHxpjoYGoje42KLkZI10kMZqYmEM-OKCiRL97V6xSfJJiIdfs4v5XK0VHJSZU5MLXp");'
+                  ></div>
+                  <div>
+                    <p class="text-[#111418] text-base font-medium leading-normal">Escapada a la costa</p>
+                    <p class="text-[#60758a] text-sm font-normal leading-normal">Descubre la belleza de la costa con nuestras rutas de ferry.</p>
+                  </div>
+                </div>
+                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg flex flex-col"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA7QEMR7gNtN6CDNGRWzvyzNOhj3PQ_1en5u9r4Ms3YMk6jIwSna2nwbx_Ash67L0BJ11Za1ItkhCN7WdW6u12BAFDvtSlWZUUi6I0NjyMg34-L7SbRfhJmEOEZndvX_iFp7s3_PjtFKkDmPVF-B9dM2iihvTgwCLKbWrFiIcR6ULNUZrK36fjQrDlJvhLTCSVQrVIV7TgK9VYBcbE07HrY8Ul4tvjNt5rrnxNaGzGVtN_3Ox5MAjDt-W8Hzi5VoU_2bau-d3OeoIX_");'
+                  ></div>
+                  <div>
+                    <p class="text-[#111418] text-base font-medium leading-normal">Aventura en la isla</p>
+                    <p class="text-[#60758a] text-sm font-normal leading-normal">Explora islas paradisíacas con nuestras ofertas especiales.</p>
+                  </div>
+                </div>
+                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg flex flex-col"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDDicNebA8epRXKXIBHNlNAXzLqhZ0xdMRAzutU0UFAdxXysLmQKL6qvsOXXATo1Y2amBd57PuJI-XJZoyBGkqVDsK3KUalt0yTzlpNRl-Bt6vXURQyNZri_VyTHNaSeGplsmHNSGFnoaBoyG-fY1N9ViXqFWkpjSG-wmh5ULPnRemcVxBHVEf2B3iZOOeX09GenI4aiIA77ytc9OFQlubA4fvr50KoI5z0FGKEs0gFG8bDMwYuQeSL4JotTCNNholCFMVBWIKv7Vqf");'
+                  ></div>
+                  <div>
+                    <p class="text-[#111418] text-base font-medium leading-normal">Viaje en ferry</p>
+                    <p class="text-[#60758a] text-sm font-normal leading-normal">Disfruta de un viaje relajante en ferry con FerryGo.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <footer class="flex justify-center">
+          <div class="flex max-w-[960px] flex-1 flex-col">
+            <footer class="flex flex-col gap-6 px-5 py-10 text-center @container">
+              <div class="flex flex-wrap items-center justify-center gap-6 @[480px]:flex-row @[480px]:justify-around">
+                <a class="text-[#60758a] text-base font-normal leading-normal min-w-40" href="#">Horarios</a>
+                <a class="text-[#60758a] text-base font-normal leading-normal min-w-40" href="#">Puertos</a>
+                <a class="text-[#60758a] text-base font-normal leading-normal min-w-40" href="#">Servicios</a>
+                <a class="text-[#60758a] text-base font-normal leading-normal min-w-40" href="#">Ayuda</a>
+                <a class="text-[#60758a] text-base font-normal leading-normal min-w-40" href="#">Contacto</a>
+              </div>
+              <p class="text-[#60758a] text-base font-normal leading-normal">© 2024 FerryGo. Todos los derechos reservados.</p>
+            </footer>
+          </div>
+        </footer>
+      </div>
+    </div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	  <dialog id="compraModal">
+    <form method="dialog" class="card" id="formCompra">
+      <header>
+        <h3>Compra de boletos – Ferry</h3>
+      </header>
+      <div class="body">
+        <div class="grid">
+          <div>
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha" name="fecha" required />
+            <div class="hint">Seleccione la fecha del viaje.</div>
+          </div>
+          <div>
+            <label for="horario">Horario</label>
+            <select id="horario" name="horario" required></select>
+            <div class="hint">Salidas entre 5:00 a. m. y 8:00 p. m. cada 2 horas.</div>
+          </div>
+          <div>
+            <label for="puerto">Puerto de salida</label>
+            <select id="puerto" name="puerto" required>
+              <option value="Puntarenas">Puntarenas</option>
+              <option value="Paquera">Paquera</option>
+            </select>
+          </div>
+          <div>
+            <label for="pasajeros">Pasajeros</label>
+            <input type="number" id="pasajeros" name="pasajeros" min="1" max="100" value="1" />
+          </div>
+          <div>
+            <label for="vehiculo">Vehículo</label>
+            <select id="vehiculo" name="vehiculo">
+              <option value="ninguno">Ninguno</option>
+              <option value="carro">Carro</option>
+              <option value="bus">Bus</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="total" id="total">Total: ₡1,500.00</div>
+
+        <div class="actions">
+          <button class="btn btn-outline" type="reset" id="cerrar">Cancelar</button>
+          <button class="btn" id="continuar" type="submit">Continuar al pago</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Página de pago -->
+  <div id="pagoPage">
+    <h2>Pago con tarjeta</h2>
+    <div class="field">
+      <label for="nombre">Nombre en la tarjeta</label>
+      <input type="text" id="nombre" required />
+    </div>
+    <div class="field">
+      <label for="numero">Número de tarjeta</label>
+      <input type="text" id="numero" maxlength="16" required />
+    </div>
+    <div class="field">
+      <label for="vencimiento">Fecha de vencimiento</label>
+      <input type="text" id="vencimiento" placeholder="MM/AA" required />
+    </div>
+    <div class="field">
+      <label for="pin">PIN / CVV</label>
+      <input type="text" id="pin" maxlength="4" required />
+    </div>
+    <button class="btn" id="pagar">Pagar</button>
+  </div>
+
+  <!-- Página del QR -->
+  <div id="qrPage">
+    <h3>Tu Boleto QR</h3>
+    <div id="qrcode"></div>
+    <div id="qrDetails"></div>
+  </div>
+
+  <!-- Librería QR -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
+  <script>
+    const pad = (n) => n.toString().padStart(2, '0');
+    const modal = document.getElementById('compraModal');
+    document.getElementById('openModal').addEventListener('click', () => modal.showModal());
+    document.getElementById('cerrar').addEventListener('click', (e) => { e.preventDefault(); modal.close(); });
+
+    const hoy = new Date();
+    const yyyy = hoy.getFullYear();
+    const mm = pad(hoy.getMonth()+1);
+    const dd = pad(hoy.getDate());
+    document.getElementById('fecha').min = `${yyyy}-${mm}-${dd}`;
+
+    // Generar horarios: 05:00 hasta 20:00 cada 2 horas
+    const selHorario = document.getElementById('horario');
+    for (let h = 5; h <= 20; h += 2) {
+      const opt = document.createElement('option');
+      let suf = h < 12 ? 'a. m.' : 'p. m.';
+      let hora = h > 12 ? h-12 : h;
+      if(h==12) suf = 'm.d.';
+      opt.value = `${pad(h)}:00`;
+      opt.textContent = `${hora}:00 ${suf}`;
+      selHorario.appendChild(opt);
+    }
+
+    // Calcular total
+    const precioPersona = 1500;
+    const precioCarro = 5000;
+    const precioBus = 7000;
+    const pasajerosInput = document.getElementById('pasajeros');
+    const vehiculoInput = document.getElementById('vehiculo');
+    const totalDiv = document.getElementById('total');
+
+    function calcularTotal() {
+      let total = (parseInt(pasajerosInput.value || 0) * precioPersona);
+      if (vehiculoInput.value === 'carro') total += precioCarro;
+      if (vehiculoInput.value === 'bus') total += precioBus;
+      totalDiv.textContent = `Total: ₡${total.toLocaleString('es-CR', {minimumFractionDigits:2})}`;
+	  return total;
+    }
+
+    pasajerosInput.addEventListener('input', calcularTotal);
+    vehiculoInput.addEventListener('change', calcularTotal);
+    calcularTotal();
+
+    const form = document.getElementById('formCompra');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+      modal.close();
+      document.getElementById('inicio').style.display = 'none';
+      document.getElementById('pagoPage').style.display = 'block';
+    });
+
+     // Pagar y generar QR
+    document.getElementById("pagar").addEventListener("click", () => {
+      const fecha = document.getElementById("fecha").value;
+      const horario = document.getElementById("horario").value;
+      const puerto = document.getElementById("puerto").value;
+      const pasajeros = document.getElementById("pasajeros").value;
+      const vehiculo = document.getElementById("vehiculo").value;
+      const total = calcularTotal();
+      const fechaCompra = new Date().toLocaleString("es-CR");
+
+      const datos = `Boleto Ferry
+Fecha viaje: ${fecha}
+Hora: ${horario}
+Puerto: ${puerto}
+Pasajeros: ${pasajeros}
+Vehículo: ${vehiculo}
+Total: ₡${total}
+Fecha compra: ${fechaCompra}`;
+
+      // Ocultar pago y mostrar QR
+      document.getElementById("pagoPage").style.display = "none";
+      document.getElementById("qrPage").style.display = "block";
+
+      // Generar QR en canvas
+      const qrContainer = document.getElementById("qrcode");
+      qrContainer.innerHTML = "";
+      const canvas = document.createElement("canvas");
+      qrContainer.appendChild(canvas);
+      QRCode.toCanvas(canvas, datos, { width: 220 }, function (error) {
+        if (error) console.error(error);
+      });
+
+      // Mostrar detalles debajo
+      document.getElementById("qrDetails").innerHTML = `
+        <h3>Detalles de la compra</h3>
+        <p><strong>Fecha del viaje:</strong> ${fecha}</p>
+        <p><strong>Hora:</strong> ${horario}</p>
+        <p><strong>Puerto:</strong> ${puerto}</p>
+        <p><strong>Pasajeros:</strong> ${pasajeros}</p>
+        <p><strong>Vehículo:</strong> ${vehiculo}</p>
+        <p><strong>Total:</strong> ₡${total.toLocaleString("es-CR")}</p>
+        <p><strong>Fecha de compra:</strong> ${fechaCompra}</p>
+      `;
+    });
+	
+
+
+  </script>
+  </body>
+</html>
